@@ -1,0 +1,103 @@
+---
+title: "Sparplan"
+date: "Letztes Update: `r format(Sys.time(), '%d.%m.%Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE,
+                      warning = FALSE)
+# 1. create github rep
+# 2. create R Project with githubclone
+# 3. create yaml
+# 4. choose css 
+# 5. push data to github
+# 6. create website in github options
+
+```
+
+```{r}
+library(readxl)
+library(tidyverse)
+library(scales)
+```
+
+```{r}
+
+Sparplan_Doku_Alva <- read_excel("~/Documents/Deutsche_Bank_u_VB/Sparplan_Doku.xlsx", 
+    sheet = "Alva_R", col_types = c("date", 
+        "numeric", "numeric", "numeric"))
+```
+
+```{r}
+# Daten anreichern
+
+Sparplan_Doku_Alva <- Sparplan_Doku_Alva %>%
+  mutate(Rendite = ETFs - Ansparen) %>%
+  mutate(Rendite_Prozent = round(Rendite/Ansparen*100,2))
+
+```
+
+```{r}
+# Daten visualisieren
+
+ggplot(Sparplan_Doku_Alva, aes(x=Closing))+
+  geom_ribbon(aes(ymin=Ansparen, ymax=ETFs,fill="Rendite"), alpha=0.8)+
+  geom_point(aes(y=ETFs),alpha=.8,shape=4)+
+  geom_text(aes(y=ETFs, label=ETFs),hjust=0.5, vjust=-2, alpha=.8)+
+  geom_area(aes(y=Ansparen, fill="Ansparen"), alpha=.8)+
+  geom_point(aes(y=Ansparen),alpha=.8, shape=4)+
+  geom_text(aes(y=Ansparen, label=Ansparen),hjust=0.5, vjust=2, alpha=.8)+
+  labs(title="Sparplan Alva", x="", y="", fill="")+
+  scale_y_continuous(limits = c(0, 1600), labels = dollar_format(suffix = " €", prefix = ""))
+```
+
+```{r}
+
+Sparplan_Doku_Emil <- read_excel("~/Documents/Deutsche_Bank_u_VB/Sparplan_Doku.xlsx", 
+    sheet = "Emil_R", col_types = c("date", 
+        "numeric", "numeric", "numeric", "numeric", "numeric"))
+
+
+Sparplan_Doku_Emil <- Sparplan_Doku_Emil %>%
+  mutate(Prozent = round((Gesamt/Ansparen-1)*100,1))
+```
+
+```{r}
+
+ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
+  geom_ribbon(aes(ymin=0, ymax=Cash,fill="Cash"), alpha=0.8)+
+  geom_point(aes(y=Cash),alpha=.8,shape=4)+
+  geom_text(aes(y=Cash, label=Cash),hjust=0.5, vjust=-2, alpha=.8)+
+  
+  geom_ribbon(aes(ymin=Cash, ymax=Cash+NASDAQ_100, fill="ETF_NASDAQ_100"), alpha=0.8)+
+  geom_point(aes(y=Cash+NASDAQ_100),alpha=.8,shape=4)+
+  geom_text(aes(y=Cash+NASDAQ_100, label=NASDAQ_100),hjust=0.5, vjust=-2, alpha=.8)+
+  
+  geom_ribbon(aes(ymin=Cash+NASDAQ_100, ymax=Cash+NASDAQ_100+Apple_u_Amazon, fill="Apple_u_Amazon"), alpha=0.8)+
+  geom_point(aes(y=Cash+NASDAQ_100+Apple_u_Amazon),alpha=.8,shape=4)+
+  geom_text(aes(y=Cash+NASDAQ_100+Apple_u_Amazon, label=Apple_u_Amazon),hjust=0.5, vjust=-2, alpha=.8)+
+  
+  geom_line(aes(y=Ansparen))+
+  
+  labs(title="Sparplan Emil", x="", y="", fill="")+
+  scale_y_continuous(limits = c(0, NA), labels = dollar_format(suffix = " €", prefix = ""))
+```
+
+```{r}
+ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
+  geom_ribbon(aes(ymin=Ansparen, ymax=Gesamt,fill="Rendite"), alpha=0.8)+
+  geom_point(aes(y=Gesamt),alpha=.8,shape=4)+
+  
+  geom_area(aes(y=Ansparen, fill="Ansparen"), alpha=.8)+
+  geom_point(aes(y=Ansparen),alpha=.8, shape=4)+
+  geom_text(aes(y=Ansparen, label=Ansparen),hjust=0.5, vjust=2, alpha=.8)+
+  
+  geom_text(aes(y=Gesamt, label=paste0(Gesamt,"; ", Prozent, "%")),hjust=0.5, vjust=-2, alpha=.8)+
+  
+  labs(title="Sparplan Emil", x="", y="", fill="")+
+  scale_y_continuous(limits = c(0, max(Sparplan_Doku_Emil$Gesamt)+500), labels = dollar_format(suffix = " €", prefix = ""))+
+  scale_x_datetime( expand = c(0.15,0),labels = date_format("%b %Y"), breaks = "1 month")+
+  theme(legend.position="bottom")
+```
+

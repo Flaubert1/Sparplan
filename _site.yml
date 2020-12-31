@@ -1,0 +1,20 @@
+name: "Sparplan"
+output_dir: "docs"
+navbar:
+  title: "Sparplan"
+  left:
+    - text: "Home"
+      href: sparplan.html
+  right:
+    - icon: fa-github fa-lg
+      href: https://github.com/Flaubert1/Sparplan
+output:
+  html_document:
+    css: "bootstrap.css"
+    df_print: paged
+
+
+# rmarkdown::render_site() # use to create local website  
+# menu: https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html#site_navigation
+#  theme: darkly
+# css file von https://bootswatch.com/3/
