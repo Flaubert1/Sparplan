@@ -7,13 +7,6 @@ date: "Letztes Update: `r format(Sys.time(), '%d.%m.%Y')`"
 knitr::opts_chunk$set(echo = FALSE,
                       message = FALSE,
                       warning = FALSE)
-# 1. create github rep
-# 2. create R Project with githubclone
-# 3. create yaml
-# 4. choose css 
-# 5. push data to github
-# 6. create website in github options
-
 ```
 
 ```{r}
