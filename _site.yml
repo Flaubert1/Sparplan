@@ -11,6 +11,9 @@ navbar:
 output:
   html_document:
     css: "bootstrap.css"
+    toc: true
+    toc_float: true
+    toc_collapsed: true
 
 
 # rmarkdown::render_site() # use to create local website  
