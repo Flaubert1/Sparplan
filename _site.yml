@@ -4,7 +4,7 @@ navbar:
   title: "Sparplan"
   left:
     - text: "Home"
-      href: sparplan.html
+      href: index.html
   right:
     - icon: fa-github fa-lg
       href: https://github.com/Flaubert1/Sparplan
