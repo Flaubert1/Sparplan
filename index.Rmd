@@ -153,7 +153,7 @@ indexvgl_monthly <- indexvgl_monthly %>% group_by(symbol) %>%
 
 ```{r}
 ggplot(data=indexvgl_monthly, aes(x=date, y=cumsum, color=symbol))+
-  geom_line()+
+  geom_line(size=1)+
   theme_classic()+
   labs(x="", y="Performance", color= "", title = "Indizes im Vergleich der letzten 5 Jahre")+
   theme(legend.position = c(0.2, 0.8))+
@@ -177,7 +177,7 @@ dollareuro <- tq_get("EURUSD=X",
                       to = "2020-12-31")
 
 ggplot(data=dollareuro, aes(x=date, y=adjusted))+
-  geom_line()+
+  geom_line(size=1)+
   theme_classic()+
   labs(title="Entwicklung Euro/Dollar", y="Kurs", x="")+
   geom_dl(aes(label=paste0(" +",round((1-first(adjusted)/last(adjusted))*100,0),"%"), x=date, y=adjusted), method = list("last.qp"), color="red")
