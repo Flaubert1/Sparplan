@@ -1,5 +1,5 @@
 ---
-title: "Sparplan"
+title: "Sparplan der Kids"
 date: "Letztes Update: `r format(Sys.time(), '%d.%m.%Y')`"
 ---
 
@@ -14,6 +14,7 @@ library(readxl)
 library(tidyverse)
 library(scales)
 ```
+
 ```{r}
 
 Sparplan_Doku_Emil <- read_excel("~/Documents/Deutsche_Bank_u_VB/Sparplan_Doku.xlsx", 
@@ -46,6 +47,10 @@ ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
   scale_y_continuous(limits = c(0, NA), labels = dollar_format(suffix = " €", prefix = ""))
 ```
 
+## Emil
+
+Die Gelder von den Sparbüchern der Sparkasse und der Volksbank wurden im August und September in Amazon- und Apple-Aktien angelegt. Diese Aktien verzeichnen seitdem eine Seitwärtsbewegung, was sich negativ auf die Rendite ausgewirkt hat. Die neuen Einzahlungen auf das Depotkonto werden seit April 2020 jeweils zum 20. jeden Monats in einen ETF auf den Nasdaq-100 angelegt. Zurzeit wird der thesaurierende [Nasdaq-ETF von Amundi](https://www.amundietf.de/privatkunden/product/view/LU1681038243) bespart, da für diesen über den Broker [maxblue](https://www.maxblue.de) bis September 2021 kein Ausgabeaufschlag erhoben wird.
+
 ```{r}
 ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
   geom_ribbon(aes(ymin=Ansparen, ymax=Gesamt,fill="Rendite"), alpha=0.8)+
@@ -64,7 +69,6 @@ ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
   theme(legend.position="bottom")
 ```
 
-
 ```{r}
 
 Sparplan_Doku_Alva <- read_excel("~/Documents/Deutsche_Bank_u_VB/Sparplan_Doku.xlsx", 
@@ -80,6 +84,10 @@ Sparplan_Doku_Alva <- Sparplan_Doku_Alva %>%
   mutate(Prozent = round(Rendite/Ansparen*100,1))
 
 ```
+
+## Alva
+
+Seit Juni 2020 werden die Gelder auf dem Depotkonto zum 20. jeden Monats in den thesaurierenden [Nasdaq-ETF von Amundi](https://www.amundietf.de/privatkunden/product/view/LU1681038243) angelegt.
 
 ```{r}
 # Daten visualisieren
@@ -98,4 +106,16 @@ ggplot(Sparplan_Doku_Alva, aes(x=Closing))+
   theme(legend.position="bottom")
 ```
 
+## Ausblick
 
+### Sektorenwette Tech und US-Amerika
+
+Die Investition in einen ETF auf den Nasdaq 100 ist eine Sektorenwette auf US-amerikanische Aktien mit hoher Markkapitalisierung. Dominiert wird der Nasdaq 100 von den Branchen IT und Kommunikationsdienste. Die Investition  in den Nasdaq 100 folgt der Annahme, dass IT-Aktien mittel- und langfristig ein hohes Wachstum generieren werden. Dabei ist jedoch nicht auszuschließen, dass es nach den sehr guten Entwicklungen der Jahre 2019 und 2020 zu einer Konsolidierung und einem langsameren Wachstum im Jahr 2021 kommen kann. In der frühen Ansparphase ist ein langsameres Wachstum jedoch unproblematisch, da niedrigere Kurse den Erwerb von mehr Anteilen ermöglichen.
+
+### Schwacher Dollarkurs
+
+Ein starker Euro kann die Rendite reduzieren. Der Anstieg des Euros von 1,12 Dollar auf 1,22 Dollar hat bereits die Rendite auf das gesamte Jahr 2020 bezogen um 9 Prozent reduziert. In der frühen Ansparphase wird diese Entwicklung als nicht bedrohlich bewertet, da ein starker Euro die US-amerikanischen Aktien billiger macht. Die Annahme ist, dass langfristig der Dollar wieder stärker wird.
+
+### Thesaurierend vs ausschüttend
+
+Der [Nasdaq-ETF von Amundi](https://www.amundietf.de/privatkunden/product/view/LU1681038243) ist thesaurierend. Nach Auslaufen der Ausgabeaufschlagreduzierung könnte in einen ausschüttenden ETF investiert werden, um den Steuerfreibetrag besser auszunutzen.
