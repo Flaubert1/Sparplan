@@ -13,6 +13,9 @@ knitr::opts_chunk$set(echo = FALSE,
 library(readxl)
 library(tidyverse)
 library(scales)
+
+library(tidyquant)
+library(directlabels)
 ```
 
 ```{r}
@@ -48,7 +51,7 @@ ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
   labs(title="Sparplan Emil", x="", y="", fill="")+
   scale_y_continuous(limits = c(0, NA), labels = dollar_format(suffix = " €", prefix = ""))
 ```
-Diese Webseite ist eine Beschreibung und Evaluation der Anlagestrategie der Sparpläne von Emil und Alva
+Diese Webseite ist eine Beschreibung und Evaluation der Anlagestrategie der Sparpläne von Emil und Alva.
 
 ## Emil
 
@@ -125,13 +128,62 @@ ggplot(Sparplan_Doku_Alva, aes(x=Closing))+
 
 Die Investition in einen ETF auf den Nasdaq 100 ist eine Sektorenwette auf US-amerikanische Aktien mit hoher Markkapitalisierung. Dominiert wird der Nasdaq 100 von den Branchen IT und Kommunikationsdienste. Die Investition in den Nasdaq 100 folgt der Annahme, dass IT-Aktien mittel- und langfristig ein hohes Wachstum generieren werden. Dabei ist jedoch nicht auszuschließen, dass es nach den sehr guten Entwicklungen der Jahre 2019 und 2020 zu einer Konsolidierung und einem langsameren Wachstum im Jahr 2021 kommen kann. In der frühen Ansparphase ist ein langsameres Wachstum jedoch unproblematisch, da niedrigere Kurse den Erwerb von mehr ETF-Anteilen ermöglichen.
 
-[Einfügen Graph Nasdaq, MSCI, Dax im Vergleich von 2015  bis 2020]
+Die nächste Abbildung zeigt die Performance der drei Indizes Nasdaq 100, Dax 30 und MSCI World (jeweils in Euro) der letzten fünf Jahre (1.1.2016 bis 31.12.2020). Die Darstellung zeigt, dass die drei Indizes von Anfang 2016 bis Ende 2017 eine parallele Entwicklung hatten. Seit Anfang 2018 hat sich der Nasdaq deutlich besser entwickelt als der Dax 30 und der MSCI World. Auch der MSCI World hat in diesem Zeitraum den Dax noch deutlich hinter sich gelassen. Aus der Unterschiedlichen Performance der drei Indizes lassen sich unterschiedliche Kaufsignale ableiten. Ein Argument ist, dass der Dax Nachholbedarf hat und sich deshalb in den kommenden Jahren stärker entwickeln wird. Ein anderes Argument lautet, dass der Trend des Nasdaq ungebrochen ist und sich dieser Index auch zukünftig stark entwickeln wird.
+
+```{r}
+# ticker symbols ishares NDX= (EXXT.DE, xtrackers Dax = DBXD.DE, XTRackers MSCI World = XDWD.DE
+# https://www.amundietf.de/privatkunden/product/view/LU1681043599
+
+indexvgl <- tq_get(c("EXXT.DE","DBXD.DE","XDWD.DE"),
+                      get  = "stock.prices",
+                      from = "2016-01-01",
+                      to = "2020-12-31")
+```
+
+```{r}
+indexvgl_monthly <- indexvgl %>% group_by(symbol) %>% 
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn,
+               period     = "monthly")%>% 
+  ungroup()
+
+indexvgl_monthly <- indexvgl_monthly %>% group_by(symbol) %>%
+  mutate(cumsum = cumsum(monthly.returns)*100)
+```
+
+```{r}
+ggplot(data=indexvgl_monthly, aes(x=date, y=cumsum, color=symbol))+
+  geom_line()+
+  theme_classic()+
+  labs(x="", y="Performance", color= "", title = "Indizes im Vergleich der letzten 5 Jahre")+
+  theme(legend.position = c(0.2, 0.8))+
+  scale_color_discrete(labels = c("DAX 30", "Nasdaq 100", "MSCI World"))+
+  scale_y_continuous(labels = dollar_format(suffix = " %", prefix = ""))
+  
+```
+
 
 ### Schwacher Dollarkurs
 
 Ein starker Euro kann die Rendite reduzieren. Der Anstieg des Euros von 1,12 Dollar auf 1,22 Dollar hat bereits die Rendite auf das gesamte Jahr 2020 bezogen um 9 Prozent reduziert. In der frühen Ansparphase wird diese Entwicklung als nicht bedrohlich bewertet, da ein starker Euro die US-amerikanischen Aktien (und somit die ETFs) billiger macht. Die Annahme ist, dass langfristig der Dollar wieder stärker wird. Kurz- und mittelfristig könnte der Euro jedoch noch weiter zulegen.
 
-[Einfügen Dollar-Euro 2020]
+Die nächste Abbildung zeigt die Entwicklung des Euro/Dollar-Kurses im Jahr 2020.
+
+```{r}
+# ticker dollar euro EURUSD=X
+dollareuro <- tq_get("EURUSD=X",
+                      get  = "stock.prices",
+                      from = "2020-01-01",
+                      to = "2020-12-31")
+
+ggplot(data=dollareuro, aes(x=date, y=adjusted))+
+  geom_line()+
+  theme_classic()+
+  labs(title="Entwicklung Euro/Dollar", y="Kurs", x="")+
+  geom_dl(aes(label=paste0(round((1-first(adjusted)/last(adjusted))*100,0),"%"), x=date, y=adjusted), method = list("last.qp"), color="red")
+
+```
+
 
 ### Thesaurierend vs ausschüttend
 
