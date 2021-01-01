@@ -180,11 +180,11 @@ ggplot(data=dollareuro, aes(x=date, y=adjusted))+
   geom_line()+
   theme_classic()+
   labs(title="Entwicklung Euro/Dollar", y="Kurs", x="")+
-  geom_dl(aes(label=paste0(round((1-first(adjusted)/last(adjusted))*100,0),"%"), x=date, y=adjusted), method = list("last.qp"), color="red")
+  geom_dl(aes(label=paste0(" +",round((1-first(adjusted)/last(adjusted))*100,0),"%"), x=date, y=adjusted), method = list("last.qp"), color="red")
 
 ```
 
 
 ### Thesaurierend vs ausschüttend
 
-Der [Nasdaq-ETF von Amundi](https://www.amundietf.de/privatkunden/product/view/LU1681038243) ist thesaurierend. Nach Auslaufen der Ausgabeaufschlagreduzierung könnte in einen ausschüttenden ETF investiert werden, um den Steuerfreibetrag besser auszunutzen. Durch die niedrige Dividende des wachstumsorientierten ETFs ist dieser Effekt jedoch gering und rechtfertigt als alleinstehender Grund keinen Wechsel des Anlageprodukts.
+Der [Nasdaq-ETF von Amundi](https://www.amundietf.de/privatkunden/product/view/LU1681038243) ist thesaurierend. Nach Auslaufen der Ausgabeaufschlagreduzierung könnte in einen ausschüttenden ETF investiert werden, um den Steuerfreibetrag besser auszunutzen. Die ausgeschütteten Erträge würden beim nächsten Kaufturnus wieder angelegt werden. Durch die niedrige Dividende des wachstumsorientierten ETFs ist dieser Effekt jedoch gering und rechtfertigt als alleinstehender Grund keinen Wechsel des Anlageprodukts.
