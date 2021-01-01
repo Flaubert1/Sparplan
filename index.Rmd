@@ -50,7 +50,7 @@ ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
 
 ## Emil
 
-Die Einzahlungen auf das Depotkonto werden seit April 2020 jeweils zum 20. des Monats in einen ETF auf den Nasdaq-100 angelegt. Zurzeit wird der thesaurierende [Nasdaq-ETF von Amundi](https://www.amundietf.de/privatkunden/product/view/LU1681038243) bespart, da für diesen über den Broker [maxblue](https://www.maxblue.de) bis September 2021 kein Ausgabeaufschlag erhoben wird.
+Die Einzahlungen von Emils Opas auf das Depotkonto werden seit April 2020 jeweils zum 20. des Monats in einen ETF auf den Nasdaq-100 angelegt. Zurzeit wird der thesaurierende [Nasdaq-ETF von Amundi](https://www.amundietf.de/privatkunden/product/view/LU1681038243) bespart, da für diesen über den Broker [maxblue](https://www.maxblue.de) bis September 2021 kein Ausgabeaufschlag erhoben wird.
 
 Der Nasdaq 100 hat sich in der zweiten Hälfte 2020 besser als der Gesamtmarkt entwickelt (16,3% Amundi Nasdaq 100 zu 12,6% Amundi MSCI World), wobei ein starker Euro die Rendite der ETFs mit hohem USD-Anteil gedrückt hat.
 
@@ -92,7 +92,7 @@ Sparplan_Doku_Alva <- Sparplan_Doku_Alva %>%
 
 ## Alva
 
-Die Einzahlungen auf das Depotkonto werden seit Juni 2020 jeweils zum 20. des Monats in einen ETF auf den Nasdaq-100 angelegt. Zurzeit wird der thesaurierende [Nasdaq-ETF von Amundi](https://www.amundietf.de/privatkunden/product/view/LU1681038243) bespart, da für diesen über den Broker [maxblue](https://www.maxblue.de) bis September 2021 kein Ausgabeaufschlag erhoben wird.
+Die Einzahlungen von Alvas Opas auf das Depotkonto werden seit Juni 2020 jeweils zum 20. des Monats in einen ETF auf den Nasdaq-100 angelegt. Zurzeit wird der thesaurierende [Nasdaq-ETF von Amundi](https://www.amundietf.de/privatkunden/product/view/LU1681038243) bespart, da für diesen über den Broker [maxblue](https://www.maxblue.de) bis September 2021 kein Ausgabeaufschlag erhoben wird.
 
 Der Nasdaq 100 hat sich in der zweiten Hälfte 2020 besser als der Gesamtmarkt entwickelt (16,3% Amundi Nasdaq 100 zu 12,6% Amundi MSCI World), wobei ein starker Euro die Rendite der ETFs mit hohem USD-Anteil gedrückt hat.
 
