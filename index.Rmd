@@ -4,9 +4,11 @@ date: "Letztes Update: `r format(Sys.time(), '%d.%m.%Y')`"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE,
-                      message = FALSE,
-                      warning = FALSE)
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
 ```
 
 ```{r}
@@ -14,6 +16,11 @@ library(readxl)
 library(tidyverse)
 library(scales)
 
+library(plotly)
+library(xts)
+library(lubridate)
+
+library(highcharter)
 library(tidyquant)
 library(directlabels)
 ```
@@ -151,6 +158,28 @@ indexvgl_monthly <- indexvgl_monthly %>% group_by(symbol) %>%
   mutate(cumsum = cumsum(monthly.returns)*100)
 ```
 
+```{r eval=FALSE, include=FALSE}
+# funktioniert nicht
+# https://www.highcharts.com/blog/tutorials/highcharts-for-r-users/
+test <- indexvgl_monthly %>%
+  select(-monthly.returns)%>%
+  spread(symbol, cumsum)
+
+
+
+test <- test %>%
+  xts(date,order.by= as.POSIXct(test$date))
+
+
+test <- data.matrix(test)
+
+highchart(type = "stock") %>% 
+  hc_add_series(test$DBXD.DE, type = "line")
+
+```
+
+
+
 ```{r}
 ggplot(data=indexvgl_monthly, aes(x=date, y=cumsum, color=symbol))+
   geom_line(size=1)+
@@ -159,7 +188,7 @@ ggplot(data=indexvgl_monthly, aes(x=date, y=cumsum, color=symbol))+
   theme(legend.position = c(0.2, 0.8))+
   scale_color_discrete(labels = c("DAX 30", "Nasdaq 100", "MSCI World"))+
   scale_y_continuous(labels = dollar_format(suffix = " %", prefix = ""))
-  
+
 ```
 
 
@@ -179,12 +208,107 @@ dollareuro <- tq_get("EURUSD=X",
 ggplot(data=dollareuro, aes(x=date, y=adjusted))+
   geom_line(size=1)+
   theme_classic()+
-  labs(title="Entwicklung Euro/Dollar", y="Kurs", x="")+
-  geom_dl(aes(label=paste0(" +",round((1-first(adjusted)/last(adjusted))*100,0),"%"), x=date, y=adjusted), method = list("last.qp"), color="red")
+  labs(title="Entwicklung Euro/Dollar über ein Jahr", y="Kurs", x="")+
+  geom_dl(aes(label=paste0(" +",round((1-first(adjusted)/last(adjusted))*100,0),"%"), x=date, y=adjusted), method = list("last.qp"), color="red")+
+  geom_smooth(method = "lm", se = FALSE, col = "red")
 
 ```
+
+Über einen Zeitraum von 10 Jahren weist der Euro jedoch eine fallende Tendenz zum Dollar auf. Im Zeitraum 2011 bis 2020 hat der Euro 9 % an Wert zum Dollar eingebüßt. 
+
+```{r}
+## create gifs http://www.nagraj.net/notes/gifs-in-r/
+## create a directory to which the images will be written
+dir_out <- file.path("~/Documents/DataCamp und R/Finanz_Test/sparplan", "gif_dir")
+dir.create(dir_out, recursive = TRUE)
+```
+
+
+```{r}
+# ticker dollar euro EURUSD=X
+dollareuro <- tq_get("EURUSD=X",
+                      get  = "stock.prices",
+                      from = "2011-01-01",
+                      to = "2020-12-31")
+
+
+## prepare data
+dollar_gif <- dollareuro %>%
+  select(c(1,2,8)) %>%
+  mutate(year = year(date))
+
+## get a sorted list of unique years in the dollar dataset
+years_gif <- 
+  dollar_gif %>%
+  pull(year) %>%
+  unique(.) %>%
+  sort(., decreasing=T)
+
+
+## find the month with the highest euro to set y axis limit
+high_euro <- max(dollar_gif$adjusted, na.rm = TRUE)
+low_euro <- min(dollar_gif$adjusted, na.rm = TRUE)
+
+```
+
+```{r}
+## loop through years ...
+## subset data ...
+## create plot of sales ...
+## write plot to file
+for (i in years_gif) {
+  
+  p <-
+    dollar_gif %>%
+    filter(year >= i) %>%
+    
+    ggplot( aes(x=date, y=adjusted))+
+    geom_line(size=0.5)+
+    theme_classic()+
+    labs(title=paste0("Entwicklung Euro/Dollar ", i, " bis 2020"), y="Kurs", x="")+
+    geom_dl(aes(label=paste0(" ",round((1-first(adjusted)/last(adjusted))*100,0),"%"), x=date, y=adjusted), method = list("last.qp"), color="red")+
+    geom_smooth(method = "lm", se = FALSE, col = "red")+
+    scale_y_continuous(limits = c(low_euro, high_euro))
+    
+  fp <- file.path(dir_out, paste0(i, ".png"))
+  
+  ggsave(plot = p, 
+         filename = fp, 
+         device = "png",
+         width = 15, height = 12, units = "cm")
+  # print(p)
+
+}
+
+```
+
+
+
+
+```{r}
+library(magick)
+## list file names and read in
+imgs <- list.files(dir_out, full.names = TRUE)
+img_list <- lapply(sort(imgs, decreasing = T), image_read)
+
+## join the images together
+img_joined <- image_join(img_list)
+
+## animate at 2 frames per second
+img_animated <- image_animate(img_joined, fps = 0.5)
+
+## save to disk
+image_write(image = img_animated,
+            path = "dollar.gif")
+
+img_animated
+```
+
+
 
 
 ### Thesaurierend vs ausschüttend
 
 Der [Nasdaq-ETF von Amundi](https://www.amundietf.de/privatkunden/product/view/LU1681038243) ist thesaurierend. Nach Auslaufen der Ausgabeaufschlagreduzierung könnte in einen ausschüttenden ETF investiert werden, um den Steuerfreibetrag besser auszunutzen. Die ausgeschütteten Erträge würden beim nächsten Kaufturnus wieder angelegt werden. Durch die niedrige Dividende des wachstumsorientierten ETFs ist dieser Effekt jedoch gering und rechtfertigt als alleinstehender Grund keinen Wechsel des Anlageprodukts.
+
+
