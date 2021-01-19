@@ -3,8 +3,10 @@ output_dir: "docs"
 navbar:
   title: "Sparplan"
   left:
-    - text: "Home"
+    - text: "Strategie und Evaluation"
       href: index.html
+    - text: "Monatliche Sparrate"
+      href: ansparen2.html
   right:
     - icon: fa-github fa-lg
       href: https://github.com/Flaubert1/Sparplan

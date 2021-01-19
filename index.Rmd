@@ -19,6 +19,11 @@ library(scales)
 library(plotly)
 library(xts)
 library(lubridate)
+library(stringr)
+library(data.table)
+library(gameofthrones) ## farbpaletten
+library(DT)
+library(gt)
 
 library(highcharter)
 library(tidyquant)
@@ -69,6 +74,8 @@ Der Nasdaq 100 hat sich in der zweiten Hälfte 2020 besser als der Gesamtmarkt e
 Die Gelder von den Sparbüchern der Sparkasse und der Volksbank wurden im August und September in Amazon- und Apple-Aktien angelegt. Diese Aktien verzeichnen seitdem eine volatile Seitwärtsbewegung, was sich negativ auf die Rendite ausgewirkt hat.
 
 ```{r}
+pal <- got(3, option = "Daenerys", direction = -1)
+
 ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
   geom_ribbon(aes(ymin=Ansparen, ymax=Gesamt,fill="Rendite"), alpha=0.8)+
   geom_point(aes(y=Gesamt),alpha=.8,shape=4)+
@@ -84,7 +91,8 @@ ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
   scale_x_datetime( expand = c(0.15,0),labels = date_format("%b %Y"), breaks = "1 month")+
   theme_classic()+
   theme(legend.position = c(0.7, 0.2),
-          legend.direction = "horizontal")
+          legend.direction = "horizontal")+
+  scale_fill_manual(values=pal)
 ```
 
 ```{r}
@@ -125,7 +133,8 @@ ggplot(Sparplan_Doku_Alva, aes(x=Closing))+
   scale_x_datetime( expand = c(0.15,0),labels = date_format("%b %Y"), breaks = "1 month")+
   theme_classic()+
   theme(legend.position = c(0.7, 0.2),
-          legend.direction = "horizontal")
+          legend.direction = "horizontal")+
+  scale_fill_manual(values=pal)
 #  theme(legend.position="bottom")
 ```
 
@@ -181,13 +190,18 @@ highchart(type = "stock") %>%
 
 
 ```{r}
+pal <- got(3, option = "Daenerys", direction = -1)
+
+indexvgl_monthly$symbol <- factor(indexvgl_monthly$symbol, levels = c("EXXT.DE", "XDWD.DE", "DBXD.DE"))
+
 ggplot(data=indexvgl_monthly, aes(x=date, y=cumsum, color=symbol))+
   geom_line(size=1)+
   theme_classic()+
   labs(x="", y="Performance", color= "", title = "Indizes im Vergleich der letzten 5 Jahre")+
   theme(legend.position = c(0.2, 0.8))+
-  scale_color_discrete(labels = c("DAX 30", "Nasdaq 100", "MSCI World"))+
-  scale_y_continuous(labels = dollar_format(suffix = " %", prefix = ""))
+#  scale_color_discrete(labels = c("DAX 30", "Nasdaq 100", "MSCI World"))+
+  scale_y_continuous(labels = dollar_format(suffix = " %", prefix = ""))+
+  scale_color_manual(values=pal, labels = c("Nasdaq 100", "MSCI World", "DAX 30"))
 
 ```
 
@@ -214,7 +228,7 @@ ggplot(data=dollareuro, aes(x=date, y=adjusted))+
 
 ```
 
-Über einen Zeitraum von 10 Jahren weist der Euro jedoch eine fallende Tendenz zum Dollar auf. Im Zeitraum 2011 bis 2020 hat der Euro 9 % an Wert zum Dollar eingebüßt. 
+Im Jahr 2020 hat der Dollar etwa 9 % gegenüber dem Euro eingebüßt. Wird ein längerer Zeitraum betrachtet, ergibt sich jedoch eine fallende Tendenz des Euros. Im Zeitraum 2011 bis 2020 hat der Euro 9 % an Wert zum Dollar eingebüßt. 
 
 ```{r}
 ## create gifs http://www.nagraj.net/notes/gifs-in-r/
