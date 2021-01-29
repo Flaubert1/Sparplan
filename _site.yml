@@ -6,7 +6,7 @@ navbar:
     - text: "Strategie und Evaluation"
       href: index.html
     - text: "Monatliche Sparrate"
-      href: ansparen2.html
+      href: 0001_ansparen_index.html
   right:
     - icon: fa-github fa-lg
       href: https://github.com/Flaubert1/Sparplan

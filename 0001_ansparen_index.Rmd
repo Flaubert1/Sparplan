@@ -39,7 +39,7 @@ library(directlabels)
 
 ## variables
 
-indizes <- c("^GDAXI", "^NDX", "^GSPC")  ## "^GDAXI", "^GSPC" "^NDX", "^FTSE" ## Ticker symbols from yahoo.finance.com 
+indizes <- c("^GDAXI", "^NDX", "^SP500TR")  ## "^GDAXI", "^GSPC" "^NDX", "^FTSE" ## Ticker symbols from yahoo.finance.com 
 start_date <- "1990-01-01"
 end_date <- "2020-12-31"
 years_save <- 18
@@ -56,7 +56,7 @@ end_year <- as.numeric(str_sub(end_date,1,4))
 ```{r cache=TRUE}
 ## data import
 ## cache true um daten nicht jedes mal neu von yahoo.finance einlesen zu müssen
-
+## new
 dax <- tq_get(indizes,
               get  = "stock.prices",
               from = "1900-01-01",
@@ -77,7 +77,7 @@ dax_1 <- dax %>%
 dax_1 <- dax_1 %>% 
     mutate(symbol = replace(symbol, symbol == "^GDAXI", "Dax")) %>%
     mutate(symbol = replace(symbol, symbol == "^NDX", "NASDAQ 100")) %>%
-    mutate(symbol = replace(symbol, symbol == "^GSPC", "S&P 500"))
+    mutate(symbol = replace(symbol, symbol == "^SP500TR", "S&P 500 TR"))
 ```
 
 
@@ -201,10 +201,10 @@ y <- ggplot(p)+
  # scale_fill_manual(values=c(pal[1], pal[70], pal[128]))+
  #  scale_fill_got(discrete = F, option = "Martell") + 
   # scale_color_got(discrete = F, option = "Martell") + 
-  theme(legend.position = "bottom" , # c(0.3, 0.7)
+  theme(panel.grid.major.y = element_line(colour = "grey", linetype = "dashed"),
+        legend.position = "bottom" , # c(0.3, 0.7)
           legend.direction = "horizontal")
-    
-  
+
   fp <- file.path(ansparen_dir_out, paste0(i, ".png"))
   
   ggsave(plot = y, 
@@ -372,7 +372,8 @@ tab_all <- tab_3 %>%
   mutate(Jahre = yrs) %>%
   mutate(Ansparen = total_save) %>%
   mutate(Ertrag_Proz. = wert/total_save-1) %>%
-  select(-3,-4,-6)
+  select(-3,-4,-6) %>%
+  select(1, 2, 4, 3, 5)
 
 #assign(  paste0("tab_all_", index_name), tab_all )
 ```
@@ -438,3 +439,14 @@ gt(tab_all,
     dec_mark = ",",
   )
 ```
+
+
+
+```{r}
+test <- tq_get("^NDX",
+              get  = "stock.prices",
+              from = "1900-01-01",
+              to = end_date,
+              complete_cases=T)
+```
+

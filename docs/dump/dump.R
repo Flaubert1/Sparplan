@@ -107,4 +107,20 @@ datatable(t_6, caption =  "Entwicklung der verschiedenen Investitionszeiträume"
 ```
 
 
+# % Zugewinn der benötigt wird, um % Verlust auszugleichen.
+# Idee von: https://ofdollarsanddata.com/10-investing-lessons-from-2020/
+```{r}
+df <- df %>%
+  mutate(c2 = 100-X1.100) %>%
+  mutate(c3 = ((100/c2)-1)*100)
+```
 
+```{r}
+df %>%
+  filter(c3 <= 100) %>%
+  ggplot()+
+  geom_line(aes(X1.100,c3)) +
+  scale_x_continuous(limits = c(0, 100)) +
+  theme_classic()
+
+```
