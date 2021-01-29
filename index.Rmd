@@ -325,8 +325,6 @@ for (i in years_gif) {
 
 
 
-<div class="superbigimage">
-
 
 ```{r}
 library(magick)
@@ -347,7 +345,6 @@ image_write(image = img_animated,
 img_animated
 ```
 
-</div>
 
 
 ### Thesaurierend vs ausschüttend
