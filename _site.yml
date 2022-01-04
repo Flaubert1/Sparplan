@@ -5,6 +5,8 @@ navbar:
   left:
     - text: "2020"
       href: index.html
+    - text: "2021"
+      href: "sparplan-2021.html"
     # - text: "Monatliche Sparrate"
     #   href: 0001_ansparen_index.html
   right:
