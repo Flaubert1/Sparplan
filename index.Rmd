@@ -1,6 +1,6 @@
 ---
-title: "Sparplan der Kids"
-date: "Letztes Update: `r format(Sys.time(), '%d.%m.%Y')`"
+title: "Sparplan der Kids 2020"
+date: "Letztes Update: 29.01.2021" # `r format(Sys.time(), '%d.%m.%Y')`
 ---
 
 ```{r setup, include=FALSE}
@@ -16,7 +16,6 @@ library(readxl)
 library(tidyverse)
 library(scales)
 
-library(plotly)
 library(xts)
 library(lubridate)
 library(stringr)
@@ -25,7 +24,6 @@ library(gameofthrones) ## farbpaletten
 library(DT)
 library(gt)
 
-library(highcharter)
 library(tidyquant)
 library(directlabels)
 ```
@@ -38,7 +36,8 @@ Sparplan_Doku_Emil <- read_excel("~/Documents/Deutsche_Bank_u_VB/Sparplan_Doku.x
 
 
 Sparplan_Doku_Emil <- Sparplan_Doku_Emil %>%
-  mutate(Prozent = round((Gesamt/Ansparen-1)*100,1))
+  mutate(Prozent = round((Gesamt/Ansparen-1)*100,1)) %>%
+  filter(Closing <= "2020-12-31")
 ```
 
 ```{r eval=FALSE, include=FALSE}
@@ -62,20 +61,23 @@ ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
   
   labs(title="Sparplan Emil", x="", y="", fill="")+
   scale_y_continuous(limits = c(0, NA), labels = dollar_format(suffix = " €", prefix = ""))
+
+# Code for scrollable charts - not necessary
+# <style>
+#   .superbigimage{
+#       overflow-x:scroll;
+#       white-space: nowrap;
+#   }
+# 
+#   .superbigimage img{
+#      max-width: none;
+#   }
+# 
+# 
+# </style>
 ```
 
-<style>
-  .superbigimage{
-      overflow-x:scroll;
-      white-space: nowrap;
-  }
 
-  .superbigimage img{
-     max-width: none;
-  }
-
-
-</style>
 
 
 **Diese Webseite ist eine Beschreibung und Evaluation der Anlagestrategie der Sparpläne von Emil und Alva.**
@@ -126,7 +128,8 @@ Sparplan_Doku_Alva <- read_excel("~/Documents/Deutsche_Bank_u_VB/Sparplan_Doku.x
 
 Sparplan_Doku_Alva <- Sparplan_Doku_Alva %>%
   mutate(Rendite = ETFs - Ansparen) %>%
-  mutate(Prozent = round(Rendite/Ansparen*100,1))
+  mutate(Prozent = round(Rendite/Ansparen*100,1)) %>%
+  filter(Closing <= "2020-12-31")
 
 ```
 
@@ -316,7 +319,7 @@ for (i in years_gif) {
   ggsave(plot = p, 
          filename = fp, 
          device = "png",
-         width = 15, height = 12, units = "cm")
+         width = 17.78, height = 12.7, units = "cm")
   # print(p)
 
 }
@@ -326,7 +329,7 @@ for (i in years_gif) {
 
 
 
-```{r}
+```{r out.width = "100%"}
 library(magick)
 ## list file names and read in
 imgs <- list.files(dir_out, full.names = TRUE)

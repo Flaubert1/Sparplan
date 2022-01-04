@@ -124,3 +124,120 @@ df %>%
   theme_classic()
 
 ```
+
+Post Allzeitheit mit Dollar Cost Averaging
+
+
+
+
+```{r}
+# Find first value of each month
+# https://github.com/tidyverse/lubridate/issues/630
+dax_1 <- dax %>%
+  mutate(year = year(date)) %>%
+  mutate(month = as.factor(month(date))) %>%
+  mutate(year_mon = floor_date(date, "month"))
+
+# Set variable for monthly savings rate
+monthly_rate <- 100
+
+# Find nth unique value
+nth(unique(dax_1$year_mon), n = 120)
+
+for (i in 1:length(unique(dax_1$year_mon))) {
+  dax_1[dax_1$year_mon == nth(unique(dax_1$year_mon), n = i), "ansparen"] <-
+    monthly_rate * i
+}
+
+dax_1$sparrate <- monthly_rate
+dax_1$anteil <- monthly_rate/dax_1$adjusted
+
+for (i in 1:length(unique(dax_1$year_mon))) {
+  dax_1[dax_1$year_mon == nth(unique(dax_1$year_mon), n = i), "wert"] <-
+    monthly_rate * i
+}
+
+
+dax_2 <- dax_1 %>%
+  mutate(anteil = ansparen/adjusted)  %>%
+  mutate(wert = anteil * adjusted)
+
+
+first monthly anteil * all anteil monat + new anteil
+
+
+length(nth(dax_1$year_mon,1))
+
+
+%>%
+  mutate(anteil_cumsum = cumsum(anteil)) %>%
+  mutate(wert = anteil_cumsum*adjusted) %>%
+  mutate(ansparen = monthly_rate) %>%
+  mutate(ansparen_cumsum = cumsum(ansparen))
+
+
+
+daily_rate <- 1
+
+
+dax_2 <- dax %>%
+  mutate(anteil = daily_rate/adjusted) %>%
+  mutate(anteil_cumsum = cumsum(anteil)) %>%
+  mutate(wert = anteil_cumsum*adjusted)
+
+```
+
+```{r}
+
+
+# Find all-time highs
+for (i in 1:nrow(dax_2)){
+  if(dax_2[i, "wert"] < max(dax_2[1:i, "wert"])){
+    dax_2[i, "ath"] <- 0
+  } else{
+    dax_2[i, "ath"] <- 1
+  }
+}
+
+
+dax_2_ath <- dax_2 %>% filter(ath == 1)
+```
+
+
+
+
+```{r}
+ggplot(dax_2, aes(x = date, y = wert)) +
+  geom_line() +
+  geom_point(
+    data = dax_2 %>% filter(ath == 1),
+    aes (x = date, y = wert),
+    color = "green",
+    size = 1,
+    alpha = .5
+  ) +
+  theme_jantau +
+  theme(
+    panel.grid.major.y = element_line(colour = "grey", linetype = "dashed")) +
+  labs(
+    title = "Allzeithochs",
+    x = "",
+    y = "Kurs (in logarithmischer Darstellung)",
+    color = "",
+    fill = "",
+    subtitle = "Datenquelle: finance.yahoo.com; Datenanalyse: jantau.com"
+  )
+```
+
+
+
+
+Themen für weitere Posts:
+  
+  Post Gewichtung aufgreifen und Sektoren hinzufügen.
+
+
+
+
+
+
