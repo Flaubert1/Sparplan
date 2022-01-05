@@ -28,6 +28,32 @@ library(tidyquant)
 library(directlabels)
 ```
 
+Das meiste Geld ist im Amundi-Nasdaq-100-ETF angelegt. Dieser hat sich im Jahr 2021 ausgezeichnet entwickelt, was noch durch die Stärke des Dollar bekärftigt wurde (siehe unten). In Euro ausgezeichnet hat der ETF um 41,6 % zugelegt.
+
+```{r}
+ndx_amundi <- tq_get("6AQQ.DE",
+                 get  = "stock.prices",
+                 from = "2021-01-01",
+                 to = "2021-12-31") %>%
+  tq_transmute(select     = adjusted,
+               mutate_fun = to.daily) %>%
+  mutate(adj_perc = round(adjusted/first(adjusted)-1, 3))
+```
+
+```{r}
+ggplot(data = ndx_amundi, aes(x = date, y = adj_perc))+
+  geom_line(size=1)+
+  scale_y_continuous(labels = scales::percent) +
+  geom_dl(aes(label = paste0(round(last(adj_perc)*100, 1), " %"), x = date, y = adj_perc), method = list("last.qp", cex = 1, hjust = 0.8, vjust = -0.8), color="red") +
+  theme_classic()+
+  labs(x="", y="Performance", title = "Amundi Nasdaq-100 ETF im Jahr 2021")+
+  theme(legend.position = c(0.2, 0.8))
+
+
+```
+
+Die Sparpläne der Kinder weisen analog eine deutliche positive Entwicklung auf. Im November kam noch eine erhebliche Einmalzahlung hinzu, was aufgrund des späten Anlagezeitpunkts die Gesamtrendite reduziert hat.
+
 ```{r}
 
 Sparplan_Doku_Emil <- read_excel("~/Documents/Deutsche_Bank_u_VB/Sparplan_Doku.xlsx", 
@@ -96,4 +122,28 @@ ggplot(Sparplan_Doku_Alva, aes(x=Closing))+
           legend.direction = "horizontal")+
   scale_fill_manual(values=pal)
 #  theme(legend.position="bottom")
+```
+
+### Starker Dollar
+
+Ein starker Dollar kann die Rendite potenzieren. Der Abstieg des Euros von 1,22 Dollar auf 1,13 Dollar hat die Rendite auf das gesamte Jahr 2021 bezogen um 8 Prozent erhöht. Damit wurde die Entwicklung aus dem Vorjahr invertiert, als der Euro von 1,12 Dollar auf 1,22 Dollar stieg. Die Annahme zu Beginn des Jahres 2021, dass kurz- und mittelfristig der Euro weiter zulegen würde hat sich demnach nicht bestätigt.
+
+Die nächste Abbildung zeigt die Entwicklung des Euro/Dollar-Kurses im Jahr 2021.
+
+
+```{r}
+# ticker dollar euro EURUSD=X
+dollareuro <- tq_get("EURUSD=X",
+                      get  = "stock.prices",
+                      from = "2021-01-01",
+                      to = "2021-12-31")
+
+ggplot(data=dollareuro, aes(x=date, y=adjusted))+
+  geom_line(size=1)+
+  geom_smooth(method = "lm", se = FALSE, col = "red") +
+  geom_dl(aes(label=paste0(" ",round((1-first(adjusted)/last(adjusted))*100,0),"%"), x=date, y=adjusted), method = list("last.qp"), color="red") +
+  theme_classic()+
+  scale_y_continuous(labels=scales::dollar_format()) +
+  labs(title="Entwicklung Euro/Dollar über ein Jahr", y="Kurs", x="")
+  
 ```
