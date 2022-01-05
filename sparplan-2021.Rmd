@@ -28,7 +28,9 @@ library(tidyquant)
 library(directlabels)
 ```
 
-Das meiste Geld ist im Amundi-Nasdaq-100-ETF angelegt. Dieser hat sich im Jahr 2021 ausgezeichnet entwickelt, was noch durch die Stärke des Dollar bekärftigt wurde (siehe unten). In Euro ausgezeichnet hat der ETF um 41,6 % zugelegt.
+### Amundi Nasdaq-100
+
+Der überwiegende Anteil des Geldes ist im Amundi-Nasdaq-100-ETF angelegt. Dieser hat sich im Jahr 2021 ausgezeichnet entwickelt, was noch durch die Stärke des Dollar unterstützt wurde (siehe unten). In Euro ausgezeichnet hat der ETF um 41,6 % zugelegt.
 
 ```{r}
 ndx_amundi <- tq_get("6AQQ.DE",
@@ -52,7 +54,9 @@ ggplot(data = ndx_amundi, aes(x = date, y = adj_perc))+
 
 ```
 
-Die Sparpläne der Kinder weisen analog eine deutliche positive Entwicklung auf. Im November kam noch eine erhebliche Einmalzahlung hinzu, was aufgrund des späten Anlagezeitpunkts die Gesamtrendite reduziert hat.
+### Emil und Alva
+
+Die Sparpläne der Kinder weisen analog eine deutliche positive Entwicklung auf. Im November kam noch eine erhebliche Einmalzahlung hinzu, die aufgrund des späten Anlagezeitpunkts im Jahr die Gesamtrendite reduziert hat.
 
 ```{r}
 
@@ -79,7 +83,7 @@ ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
   
   geom_text(aes(y=Gesamt, label=paste0(Gesamt," €\n", Prozent, "%")),hjust=0.5, vjust=-0.5, alpha=.8, size = 3)+
   
-  labs(title="Sparplan Emil", x="", y="", fill="")+
+  labs(title="Sparplan Emil im Jahr 2021", x="", y="", fill="")+
   scale_y_continuous(limits = c(0, max(Sparplan_Doku_Emil$Gesamt)+2000), labels = dollar_format(suffix = " €", prefix = ""))+
   scale_x_datetime( expand = c(0.08, 0),labels = date_format("%b %y"), breaks = "1 month")+
   theme_classic()+
@@ -114,14 +118,13 @@ ggplot(Sparplan_Doku_Alva, aes(x=Closing))+
   geom_area(aes(y=Ansparen, fill="Ansparen"), alpha=.8)+
   geom_point(aes(y=Ansparen),alpha=.8, shape=4)+
   geom_text(aes(y=Ansparen, label=Ansparen),hjust=0.5, vjust=2, alpha=.8, size = 3)+
-  labs(title="Sparplan Alva", x="", y="", fill="")+
+  labs(title="Sparplan Alva im Jahr 2021", x="", y="", fill="")+
   scale_y_continuous(limits = c(0, 10000), labels = dollar_format(suffix = " €", prefix = ""))+
   scale_x_datetime( expand = c(0.08,0),labels = date_format("%b %y"), breaks = "1 month")+
   theme_classic()+
   theme(legend.position = c(0.7, 0.1),
           legend.direction = "horizontal")+
   scale_fill_manual(values=pal)
-#  theme(legend.position="bottom")
 ```
 
 ### Starker Dollar
@@ -144,6 +147,6 @@ ggplot(data=dollareuro, aes(x=date, y=adjusted))+
   geom_dl(aes(label=paste0(" ",round((1-first(adjusted)/last(adjusted))*100,0),"%"), x=date, y=adjusted), method = list("last.qp"), color="red") +
   theme_classic()+
   scale_y_continuous(labels=scales::dollar_format()) +
-  labs(title="Entwicklung Euro/Dollar über ein Jahr", y="Kurs", x="")
+  labs(title="Entwicklung Euro/Dollar im Jahr 2021", y="Kurs", x="")
   
 ```
