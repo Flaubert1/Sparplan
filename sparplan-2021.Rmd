@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 
 ```{r}
 library(readxl)
-library(tidyverse)
+#library(tidyverse)
 library(scales)
 
 # library(xts)
@@ -25,6 +25,8 @@ library(gameofthrones) ## farbpaletten
 # library(gt)
 
 library(tidyquant)
+library(ggplot2)
+library(dplyr)
 library(directlabels)
 ```
 
@@ -42,9 +44,59 @@ ndx_amundi <- tq_get("6AQQ.DE",
   mutate(adj_perc = round(adjusted/first(adjusted)-1, 3))
 ```
 
+
+```{r}
+ndx_amundi_2022 <- tq_get("6AQQ.DE",
+                 get  = "stock.prices",
+                 from = "2022-01-01",
+                 to = "2022-12-31") %>%
+  tq_transmute(select     = adjusted,
+               mutate_fun = to.daily) %>%
+  mutate(adj_perc = round(adjusted/first(adjusted)-1, 3))
+
+dollareuro_2022 <- tq_get("EURUSD=X",
+                      get  = "stock.prices",
+                      from = "2022-01-01",
+                      to = "2022-12-31")
+```
+
+```{r}
+library(plotly)
+
+a <- list(
+  x = ~last(date),
+  y = ~last(adj_perc),
+  text = ~last(paste0(adj_perc * 100, "%")),
+  xref = "x",
+  yref = "y",
+  showarrow = TRUE,
+  arrowhead = 7,
+  ax = 30,
+  ay = 0
+)
+
+plot_ly(data = ndx_amundi_2022, 
+       x = ~date, 
+       y = ~adj_perc) |> 
+  add_lines(line = list(color = "#000000")) |>
+  layout(xaxis = list(title = FALSE),
+         yaxis = list(title = "Performance", tickformat = ".0%"),
+         annotations = a)
+
+
+plot_ly(data = dollareuro_2022, 
+       x = ~date, 
+       y = ~adjusted) |> 
+  add_lines(line = list(color = "#000000")) |>
+  layout(xaxis = list(title = FALSE),
+         yaxis = list(title = "Performance"))
+
+```
+
+
 ```{r}
 ggplot(data = ndx_amundi, aes(x = date, y = adj_perc))+
-  geom_line(size=1)+
+  geom_line(linewidth=1)+
   scale_y_continuous(labels = scales::percent) +
   geom_dl(aes(label = paste0(round(last(adj_perc)*100, 1), " %"), x = date, y = adj_perc), method = list("last.qp", cex = 1, hjust = 0.8, vjust = -0.8), color="red") +
   theme_classic()+

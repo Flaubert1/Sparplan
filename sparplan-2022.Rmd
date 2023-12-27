@@ -1,0 +1,201 @@
+---
+title: "Sparplan der Kids 2022"
+date: "Letztes Update: `r format(Sys.time(), '%d.%m.%Y')`"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r}
+library(readxl)
+library(tidyverse)
+library(scales)
+
+#library(gameofthrones) ## farbpaletten
+
+library(tidyquant)
+library(directlabels)
+
+```
+
+## Der NASDAQ-100-ETF von Amundi
+
+Der Sparbetrag wird monatlich in den [Nasdaq-100-ETF von Amundi](https://www.justetf.com/en/etf-profile.html?isin=LU1681038243) angelegt. Wie der Gesamtmarkt hat auch dieser ETF im Jahr 2022 durch die Zinsanhebungen der US-amerikanischen Zentralbank schwer gelitten. Die Zinsanhebungen waren nötig gewesen, um die hohe Inflation zu reduzieren. Dabei sind die den NASDAQ-100 dominierenden Wachstumswerte, wie beispielsweise Tech-Unternehmen, durch die Zinsanhebungen besonders unter Druck geraten.
+
+```{r}
+ndx_amundi_2022 <- tq_get("6AQQ.DE",
+                 get  = "stock.prices",
+                 from = "2022-01-01",
+                 to = "2022-12-31") %>%
+  tq_transmute(select     = adjusted,
+               mutate_fun = to.daily) %>%
+  mutate(adj_perc = round(adjusted/first(adjusted)-1, 3))
+```
+
+```{r}
+ggplot(data = ndx_amundi_2022, aes(x = date, y = adj_perc))+
+  geom_line(linewidth=1)+
+  scale_x_date(expand = expansion(mult = c(0.05, .15))) +
+  scale_y_continuous(labels = scales::percent) +
+  geom_dl(aes(label = paste0(round(last(adj_perc)*100, 1), " %"), x = date, y = adj_perc), method = list("last.qp", cex = 1, hjust = 0, vjust = -1), color="red") +
+  theme_classic()+
+  labs(x="", y="Performance", title = "Amundi Nasdaq-100 ETF im Jahr 2022")
+
+
+```
+
+## Starker Dollar, schwacher Dollar
+
+Ein starker Dollar hat den Kurs des in Euro ausgezeichneten ETFs in der ersten Jahreshälfte gestützt. In der zweiten Jahrehälfte hat der Euro jedoch etwa die Hälfte seines Wertverlustes zum Dollar wieder wettgemacht, was wiederum den europäischen NASDAQ-100-ETF zum Ende des Jahres ein weiters Mal deutlich unter Druck gesetzt hat.
+
+```{r}
+# ticker dollar euro EURUSD=X
+dollareuro_2022 <- tq_get("EURUSD=X",
+                      get  = "stock.prices",
+                      from = "2022-01-01",
+                      to = "2022-12-31")
+
+ggplot(data=dollareuro_2022, aes(x=date, y=adjusted))+
+  geom_line(linewidth=1)+
+  geom_smooth(method = "loess", se = FALSE, col = "red") +
+  geom_dl(aes(label=paste0(" ",round((1-first(adjusted)/last(adjusted))*100,0),"%"), x=date, y=adjusted), method = list("last.qp",  cex = 1, hjust = 0, vjust = -1), color="red") +
+  theme_classic()+
+  scale_x_date(expand = expansion(mult = c(0.05, .15))) +
+  scale_y_continuous(labels=scales::dollar_format()) +
+  labs(title="Entwicklung Euro/Dollar im Jahr 2022", y="Kurs", x="")
+  
+```
+
+## Emil und Alva
+
+Die Portfolios haben sich im weiten Verlauf des Jahres trotz der schlechten Lage am Aktienmarkt ganz gut gehalten. Erst mit den weiteren Rücksetzern im November und Dezember, die mit einer Erholung des Euros einhergingen, haben die Kurse noch einmal deutlich Federn gelassen und das Portfolio in den Verlustbereich gebracht.
+
+```{r}
+
+Sparplan_Doku_Emil <- read_excel("~/Documents/Sparplan_Doku.xlsx", 
+    sheet = "Emil_R", col_types = c("date", 
+        "numeric", "numeric", "numeric", "numeric", "numeric"))
+
+
+Sparplan_Doku_Emil <- Sparplan_Doku_Emil %>%
+  mutate(Prozent = round((Gesamt/Ansparen-1)*100,1)) %>%
+  filter(Closing >= "2022-01-01" & Closing <= "2023-01-01")
+
+```
+
+```{r}
+# pal <- got(3, option = "Daenerys", direction = -1)
+
+pal <- c("#D1BDA2", "#2B818E", "#792427")
+
+# daenerys = c("#792427", "#545058", "#2B818E", "#80A098", "#D1BDA2"),
+
+ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
+
+  geom_ribbon(aes(ymin=Ansparen, ymax=Gesamt,fill="Rendite"), alpha=0.8)+
+  geom_area(aes(y=Ansparen, fill="Ansparen"), alpha=0.7)+
+  geom_point(aes(y=Gesamt),alpha=.8,shape=4)+
+  
+  geom_point(aes(y=Ansparen),alpha=.8, shape=4)+
+
+  #geom_text(aes(y=Ansparen, label=paste0(Ansparen, " €")),hjust=0.5, vjust=2, alpha=.8, size = 3)+
+  
+  geom_text(aes(y=Gesamt, label=paste0(Gesamt," €\n", Prozent, "%")),hjust=0.5, vjust=-0.5, alpha=.8, size = 3)+
+  
+  labs(title="Portfolio Emil im Jahr 2022", x="", y="", fill="")+
+  scale_y_continuous(limits = c(0, max(Sparplan_Doku_Emil$Gesamt)+2000), labels = dollar_format(suffix = " €", prefix = ""))+
+  scale_x_datetime( expand = c(0.08, 0),labels = date_format("%b %y"), breaks = "1 month")+
+  theme_classic()+
+  theme(legend.position = c(0.7, 0.2),
+          legend.direction = "horizontal")+
+  scale_fill_manual(values=pal)
+```
+
+
+```{r}
+
+Sparplan_Doku_Alva <- read_excel("~/Documents/Sparplan_Doku.xlsx", 
+    sheet = "Alva_R", col_types = c("date", 
+        "numeric", "numeric", "numeric"))
+
+Sparplan_Doku_Alva <- Sparplan_Doku_Alva %>%
+  mutate(Rendite = ETFs - Ansparen) %>%
+  mutate(Prozent = round(Rendite/Ansparen*100,1)) %>%
+  filter(Closing >= "2022-01-01" & Closing <= "2023-01-01") 
+```
+
+```{r}
+# Daten visualisieren
+
+ggplot(Sparplan_Doku_Alva, aes(x=Closing))+
+  geom_ribbon(aes(ymin=Ansparen, ymax=ETFs,fill="Rendite"), alpha=0.8)+
+
+  geom_area(aes(y=Ansparen, fill="Ansparen"), alpha=.7)+
+  geom_point(aes(y=ETFs),alpha=.8,shape=4)+
+  geom_text(aes(y=ETFs, label=paste0(ETFs," €\n ", Prozent, "%")),hjust=0.5, vjust=-0.5, alpha=.8, size = 3)+
+  geom_point(aes(y=Ansparen),alpha=.8, shape=4)+
+ # geom_text(aes(y=Ansparen, label=Ansparen),hjust=0.5, vjust=2, alpha=.8, size = 3)+
+  labs(title="Portfolio Alva im Jahr 2022", x="", y="", fill="")+
+  scale_y_continuous(limits = c(0, max(Sparplan_Doku_Alva$ETFs)+1000), labels = dollar_format(suffix = " €", prefix = ""))+
+  scale_x_datetime(expand = c(0.08,0),labels = date_format("%b %y"), breaks = "1 month")+
+  theme_classic()+
+  theme(legend.position = c(0.7, 0.2),
+          legend.direction = "horizontal")+
+  scale_fill_manual(values=pal)
+```
+
+## Ausblick 2023
+
+Das vergangene Jahr war ein schwieriges Jahr für den Aktienmarkt. Insbesondere die den NASDAQ-100 dominierenden Wachstumsaktien haben unter den gestiegen Zinsen gelitten. Sollten die Zinsen weiter steigen, ist auch mit weiteren Abschlägen zu rechnen. Zurzeit (Anfang Januar) sieht es jedoch danach, dass die Inflation sinkt und dass Zinsanhebungen beendet werden. Sollten die Unternehmensgewinne halten, dann können die Kurse schnell wieder steigen.
+
+Da die Sparpläne langfristig angelegt sind und sie sich in der Ansparphase befinden, bedeuten Kursrücksetzer wie im Jahr 2022 eine Chance, die es ermöglicht, Anteile zu günstigeren Kursen zu erwerben. Langfristig kann so mehr Kapital aufgebaut werden. 
+
+Ich gehe nach wie vor davon aus, dass mittelfristig Wachstumswerte wieder Value- oder Substanzwerte übertreffen werden. Das Faktorinvestieren werde ich jedoch im Auge behalten und falls die Wachstumswerte auch im Jahr 2023 schlechter als der Gesamtmarkt abschneiden sollten, eine Umschichtung in einen maktneutralen ETF, der in den MSCI World investiert ist, in Betracht ziehen.
+
+Vorläufig werde ich jedoch nichts an der Strategie ändern und die Sparbeiträge weiterhin komplett in den NASDAQ-100 investieren. 
+
+
+```{r}
+# bench_etfs <- tq_get(c("6AQQ.DE", "SXR8.DE", "EUNL.DE", "EUNK.DE","EXS1.DE"),
+#                  get  = "stock.prices",
+#                  from = "2022-01-01",
+#                  to = "2022-12-31") |>
+#   select(symbol, date, adjusted) |>
+#   group_by(symbol) |>
+#   mutate(adj_perc = round(adjusted/first(adjusted)-1, 3)) |>
+#        ungroup() |>
+#        mutate(date = as.Date(date))
+# 
+# ggplot(bench_etfs, aes(x=date, y=adj_perc, color=symbol))+
+#   geom_line()+
+#   labs(title="ETFs im Jahr 2022", x="", y="", fill="")+
+#   scale_y_continuous(labels = percent_format())+
+#  # scale_x_datetime(expand = c(0.08,0),labels = date_format("%b %y"), breaks = "1 month")+
+#   theme_classic()
+```
+
+```{r}
+# bench_etfs <- tq_get(c("6AQQ.DE", "SXR8.DE", "EUNL.DE", "EUNK.DE","EXS1.DE"),
+#                  get  = "stock.prices",
+#                  from = "2020-01-01",
+#                  to = "2022-12-31") |>
+#   select(symbol, date, adjusted) |>
+#   group_by(symbol) |>
+#   mutate(adj_perc = round(adjusted/first(adjusted)-1, 3)) |>
+#        ungroup() |>
+#        mutate(date = as.Date(date))
+# 
+# ggplot(bench_etfs, aes(x=date, y=adj_perc, color=symbol))+
+#   geom_line()+
+#   labs(title="ETFs 2020-2022", x="", y="", fill="")+
+#   scale_y_continuous(labels = percent_format())+
+#  # scale_x_datetime(expand = c(0.08,0),labels = date_format("%b %y"), breaks = "1 month")+
+#   theme_classic()
+```
