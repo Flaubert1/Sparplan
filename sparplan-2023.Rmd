@@ -1,0 +1,222 @@
+---
+title: "Sparplan der Kids 2023"
+date: "Letztes Update: 01.01.2024" #`r format(Sys.time(), '%d.%m.%Y')`
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r}
+library(readxl)
+library(tidyverse)
+library(scales)
+
+#library(gameofthrones) ## farbpaletten
+
+library(tidyquant)
+library(directlabels)
+
+```
+
+## Der NASDAQ-100-ETF von Amundi
+
+Der Sparbetrag wird monatlich in den [Nasdaq-100-ETF von Amundi](https://www.justetf.com/en/etf-profile.html?isin=LU1681038243) angelegt. Im Jahr 2023 hat sich der ETF extrem gut entwickelt. 
+
+```{r}
+ndx_amundi_2023 <- tq_get("6AQQ.DE",
+                 get  = "stock.prices",
+                 from = "2023-01-01",
+                 to = "2023-12-31") %>%
+  tq_transmute(select     = adjusted,
+               mutate_fun = to.daily) %>%
+  mutate(adj_perc = round(adjusted/first(adjusted)-1, 3))
+```
+
+```{r}
+ggplot(data = ndx_amundi_2023, aes(x = date, y = adj_perc))+
+  geom_line(linewidth=1)+
+  scale_x_date(expand = expansion(mult = c(0.05, .15))) +
+  scale_y_continuous(labels = scales::percent) +
+  geom_dl(aes(label = paste0(round(last(adj_perc)*100, 1), " %"), x = date, y = adj_perc), method = list("last.qp", cex = 1, hjust = 0, vjust = -1), color="red") +
+  theme_classic()+
+  labs(x="", y="Performance", title = "Amundi Nasdaq-100 ETF (A2H577) im Jahr 2022")
+
+
+```
+
+## Starker Dollar, schwacher Dollar
+
+Das Verhältnis vom Dollar zum Euro hat sich im Jahr 2023 kaum verändert. Der Euro hat sich im Vergleich zum Dollar etwas stabilisiert. 
+
+```{r}
+# ticker dollar euro EURUSD=X
+dollareuro_2022 <- tq_get("EURUSD=X",
+                      get  = "stock.prices",
+                      from = "2023-01-01",
+                      to = "2023-12-31")
+
+ggplot(data=dollareuro_2022, aes(x=date, y=adjusted))+
+  geom_line(linewidth=1)+
+  geom_smooth(method = "loess", se = FALSE, col = "red") +
+  geom_dl(aes(label=paste0(" ",round((1-first(adjusted)/last(adjusted))*100,0),"%"), x=date, y=adjusted), method = list("last.qp",  cex = 1, hjust = 0, vjust = -1), color="red") +
+  theme_classic()+
+  scale_x_date(expand = expansion(mult = c(0.05, .15))) +
+  scale_y_continuous(labels=scales::dollar_format()) +
+  labs(title="Entwicklung Euro/Dollar im Jahr 2023", y="Kurs", x="")
+  
+```
+
+## Emil und Alva
+
+Die Portfolios haben sich gut entwickelt und stehen Ende 2023 deutlich im Plus.
+
+```{r}
+
+Sparplan_Doku_Emil <- read_excel("~/Documents/Sparplan_Doku_Export.xlsx", 
+    sheet = "Emil_R")
+
+
+Sparplan_Doku_Emil <- Sparplan_Doku_Emil %>%
+  mutate(Prozent = round((Gesamt/Ansparen-1)*100,1)) %>%
+  filter(Closing >= "2020-01-01" & Closing <= "2024-01-01")
+
+```
+
+```{r}
+# pal <- got(3, option = "Daenerys", direction = -1)
+
+pal <- c("#D1BDA2", "#2B818E", "#792427")
+
+# daenerys = c("#792427", "#545058", "#2B818E", "#80A098", "#D1BDA2"),
+
+ggplot(Sparplan_Doku_Emil, aes(x = Closing)) +
+  
+  geom_ribbon(aes(ymin = Ansparen, ymax = Gesamt, fill = "Rendite"), alpha =
+                0.8) +
+  geom_area(aes(y = Ansparen, fill = "Ansparen"), alpha = 0.7) +
+  
+  
+  #geom_text(aes(y=Ansparen, label=paste0(Ansparen, " €")),hjust=0.5, vjust=2, alpha=.8, size = 3)+
+  
+  geom_text(
+    aes(y = Gesamt, label = paste0(Gesamt, " €\n", Prozent, "%")),
+    hjust = 0.5,
+    vjust = -0.5,
+    alpha = .8,
+    size = 3,
+    check_overlap = TRUE
+  ) +
+  geom_point(aes(y = Gesamt), alpha = .5, size = 1) +
+  
+  geom_point(aes(y = Ansparen), alpha = .5, size = 1) +
+  labs(title = "Portfolio Emil im 2020-2023",
+       x = "",
+       y = "",
+       fill = "") +
+  scale_y_continuous(limits = c(0, max(Sparplan_Doku_Emil$Gesamt) + 2000),
+                     labels = dollar_format(suffix = " €", prefix = "")) +
+  scale_x_datetime(
+    expand = c(0.05, 0),
+    labels = date_format("%b %Y"),
+    breaks = "3 month"
+  ) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = c(0.7, 0.2),
+    legend.direction = "horizontal"
+  ) +
+  scale_fill_manual(values = pal)  +
+  annotate("curve", x = as.POSIXct("2021-05-01"), y = 18000, xend = as.POSIXct("2021-10-15"), yend = 14000, curvature = 0.2, arrow = arrow(length = unit(0.3, "cm"))) +
+  # Add text above arrow "Einmalzahlung Schwedenhaus"
+  annotate("text", x = as.POSIXct("2021-05-01"), y = 18500, label = "Einmalzahlung\nSchwedenhaus", hjust = 0.5, vjust = 0, size = 3)
+```
+
+
+```{r}
+
+Sparplan_Doku_Alva <- read_excel("~/Documents/Sparplan_Doku_Export.xlsx", 
+    sheet = "Alva_R")
+
+Sparplan_Doku_Alva <- Sparplan_Doku_Alva %>%
+  mutate(Rendite = ETFs - Ansparen) %>%
+  mutate(Prozent = round(Rendite/Ansparen*100,1)) %>%
+  filter(Closing >= "2020-05-01" & Closing <= "2024-01-01") 
+```
+
+```{r}
+# Daten visualisieren
+
+Sparplan_Doku_Alva %>%
+ggplot(aes(x=Closing))+
+  geom_ribbon(aes(ymin=Ansparen, ymax=ETFs,fill="Rendite"), alpha=0.8)+
+
+  geom_area(aes(y=Ansparen, fill="Ansparen"), alpha=.7)+
+  
+  geom_text(aes(y=ETFs, label=paste0(ETFs," €\n ", Prozent, "%")),hjust=0.5, vjust=-0.5, alpha=.8, size = 3, check_overlap = TRUE)+
+  geom_point(aes(y=ETFs),alpha=.5, size = 1)+
+  geom_point(aes(y=Ansparen),alpha=.3, size = 1)+
+ # geom_text(aes(y=Ansparen, label=Ansparen),hjust=0.5, vjust=2, alpha=.8, size = 3)+
+  labs(title="Portfolio Alva 2020-2023", x="", y="", fill="")+
+  scale_y_continuous(limits = c(0, 15000), labels = dollar_format(suffix = " €", prefix = ""))+
+  scale_x_datetime(expand = c(0.05,0),labels = date_format("%b %Y"), breaks = "3 month")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = c(0.7, 0.2),
+          legend.direction = "horizontal")+
+  scale_fill_manual(values=pal) +
+  # Add curved arrow to point Jan 2022 and 10000€ 
+  annotate("curve", x = as.POSIXct("2021-05-01"), y = 11000, xend = as.POSIXct("2021-11-01"), yend = 8000, curvature = 0.2, arrow = arrow(length = unit(0.3, "cm"))) +
+  # Add text above arrow "Einmalzahlung Schwedenhaus"
+  annotate("text", x = as.POSIXct("2021-05-01"), y = 11500, label = "Einmalzahlung\nSchwedenhaus", hjust = 0.5, vjust = 0, size = 3)
+  
+ 
+  
+```
+
+## Ausblick 2024
+
+Der wachstumsorientierte NASDAQ-100-ETF hat sich 2023 sehr gut entwickelt und somit hat sich die etwas riskioreichere Anlagestrategie ausgezahlt. Wie sich die Märkte im Jahr 2024 entwickeln werden, ist ungewiss. Die Analysten sagen, dass die historische Vergleich darauf hindeuten, dass es auch 2024 weiter nach oben geht. Da der Anlagehorizont der Kinder noch sehr lang ist, ist das jedoch unerheblich. Die Hauptsache ist, dass weiterhin kontinuierlich investiert wird.
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+
+
+```{r}
+
+```{r}

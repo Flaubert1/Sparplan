@@ -20,7 +20,7 @@ library(xts)
 library(lubridate)
 library(stringr)
 library(data.table)
-library(gameofthrones) ## farbpaletten
+#library(gameofthrones) ## farbpaletten
 library(DT)
 library(gt)
 
@@ -94,7 +94,8 @@ Die Gelder von den Sparbüchern der Sparkasse und der Volksbank wurden im August
 
 
 ```{r}
-pal <- got(3, option = "Daenerys", direction = -1)
+# pal <- got(3, option = "Daenerys", direction = -1)
+pal <- c("#D1BDA2", "#2B818E", "#792427")
 
 ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
   geom_ribbon(aes(ymin=Ansparen, ymax=Gesamt,fill="Rendite"), alpha=0.8)+
@@ -216,7 +217,8 @@ highchart(type = "stock") %>%
 <div class="superbigimage">
 
 ```{r}
-pal <- got(3, option = "Daenerys", direction = -1)
+# pal <- got(3, option = "Daenerys", direction = -1)
+pal <- c("#D1BDA2", "#2B818E", "#792427")
 
 indexvgl_monthly$symbol <- factor(indexvgl_monthly$symbol, levels = c("EXXT.DE", "XDWD.DE", "DBXD.DE"))
 
