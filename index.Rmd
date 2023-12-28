@@ -30,7 +30,7 @@ library(directlabels)
 
 ```{r}
 
-Sparplan_Doku_Emil <- read_excel("~/Documents/Deutsche_Bank_u_VB/Sparplan_Doku.xlsx", 
+Sparplan_Doku_Emil <- read_excel("~/Documents/Sparplan_Doku_Export.xlsx", 
     sheet = "Emil_R", col_types = c("date", 
         "numeric", "numeric", "numeric", "numeric", "numeric"))
 
@@ -119,7 +119,7 @@ ggplot(Sparplan_Doku_Emil, aes(x=Closing))+
 
 ```{r}
 
-Sparplan_Doku_Alva <- read_excel("~/Documents/Deutsche_Bank_u_VB/Sparplan_Doku.xlsx", 
+Sparplan_Doku_Alva <- read_excel("~/Documents/Sparplan_Doku_Export.xlsx", 
     sheet = "Alva_R", col_types = c("date", 
         "numeric", "numeric", "numeric"))
 ```
