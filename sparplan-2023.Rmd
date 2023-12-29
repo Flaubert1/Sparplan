@@ -169,7 +169,7 @@ Sparplan_Doku_Alva %>%
 
 ## Der NASDAQ-100-ETF von Amundi
 
-Der Sparbetrag wird monatlich in den [Nasdaq-100-ETF von Amundi](https://www.justetf.com/en/etf-profile.html?isin=LU1681038243) angelegt. Im Jahr 2023 hat sich der ETF extrem gut entwickelt. 
+Der Sparbetrag wird monatlich in den [Nasdaq-100-ETF von Amundi](https://www.justetf.com/en/etf-profile.html?isin=LU1681038243) angelegt. Im Jahr 2023 hat sich der ETF extrem gut entwickelt.
 
 ```{r}
 ndx_amundi_2023 <- tq_get("6AQQ.DE",
