@@ -65,7 +65,7 @@ ggplot(Sparplan_Doku_Emil, aes(x = Closing)) +
     size = 3
   ) +
   geom_point(aes(y = Gesamt, alpha = if_else(month(Closing) >= 12, 1, 0)), show.legend = FALSE)+
-  labs(title = "Portfolio Emil im 2020-2023",
+  labs(title = "Portfolio Emil 2020-2023",
        x = "",
        y = "",
        fill = "") +
