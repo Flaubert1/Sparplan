@@ -29,8 +29,7 @@ library(directlabels)
 
 ## Emil und Alva
 
-Die Portfolios haben sich gut entwickelt und stehen Ende 2023 deutlich im Plus.
-
+Die Portfolios haben sich gut entwickelt und stehen Ende 2023 deutlich im Plus. Emils Portfolio steht 25,5 % im Plus und Alvas 21,4 %.
 ```{r}
 
 Sparplan_Doku_Emil <- read_excel("~/Documents/Sparplan_Doku_Export.xlsx", 
