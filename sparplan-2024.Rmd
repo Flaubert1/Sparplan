@@ -1,6 +1,6 @@
 ---
-title: "Sparplan der Kids 2023"
-date: "Letztes Update: 01.01.2024" #`r format(Sys.time(), '%d.%m.%Y')`
+title: "Sparplan der Kids 2024"
+date: "Letztes Update: 02.01.2025" #`r format(Sys.time(), '%d.%m.%Y')`
 editor_options: 
   chunk_output_type: console
 ---
@@ -29,16 +29,18 @@ library(directlabels)
 
 ## Emil und Alva
 
-Die Portfolios haben sich gut entwickelt und stehen Ende 2023 deutlich im Plus. Emils Portfolio steht 25,5 % im Plus und Alvas 21,4 %.
+Die Portfolios haben sich gut entwickelt und stehen Ende 2024 deutlich im Plus. Emils Portfolio steht 62,4 % im Plus und Alvas 52,2 %.
 ```{r}
 
 Sparplan_Doku_Emil <- read_excel("~/Documents/Sparplan_Doku_Export.xlsx", 
-    sheet = "Emil_R")
+    sheet = "Emil_R", col_types = c("date", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric"))
 
 
 Sparplan_Doku_Emil <- Sparplan_Doku_Emil %>%
   mutate(Prozent = round((Gesamt/Ansparen-1)*100,1)) %>%
-  filter(Closing >= "2020-01-01" & Closing <= "2024-01-01")
+  filter(Closing >= "2020-01-01" & Closing <= "2025-01-01")
 
 ```
 
@@ -64,11 +66,11 @@ ggplot(Sparplan_Doku_Emil, aes(x = Closing)) +
     size = 3
   ) +
   geom_point(aes(y = Gesamt, alpha = if_else(month(Closing) >= 12, 1, 0)), show.legend = FALSE)+
-  labs(title = "Portfolio Emil 2020-2023",
+  labs(title = "Portfolio Emil 2020-2024",
        x = "",
        y = "",
        fill = "") +
-  scale_y_continuous(limits = c(0, max(Sparplan_Doku_Emil$Gesamt) + 5000),
+  scale_y_continuous(limits = c(0, max(Sparplan_Doku_Emil$Gesamt) + 7000),
                      labels = dollar_format(suffix = " €", prefix = "")) +
   scale_x_datetime(
     expand = c(0.05, 0),
@@ -93,12 +95,13 @@ ggplot(Sparplan_Doku_Emil, aes(x = Closing)) +
 ```{r}
 
 Sparplan_Doku_Alva <- read_excel("~/Documents/Sparplan_Doku_Export.xlsx", 
-    sheet = "Alva_R")
+    sheet = "Alva_R", col_types = c("date", 
+        "numeric", "numeric", "numeric"))
 
 Sparplan_Doku_Alva <- Sparplan_Doku_Alva %>%
   mutate(Rendite = ETFs - Ansparen) %>%
   mutate(Prozent = round(Rendite/Ansparen*100,1)) %>%
-  filter(Closing >= "2020-05-01" & Closing <= "2024-01-01") 
+  filter(Closing >= "2020-05-01" & Closing <= "2025-01-01") 
 ```
 
 ```{r}
@@ -125,7 +128,7 @@ Sparplan_Doku_Alva %>%
        x = "",
        y = "",
        fill = "") +
-  scale_y_continuous(limits = c(0, max(Sparplan_Doku_Alva$ETFs) + 3000),
+  scale_y_continuous(limits = c(0, max(Sparplan_Doku_Alva$ETFs) + 5000),
                      labels = dollar_format(suffix = " €", prefix = "")) +
   scale_x_datetime(
     expand = c(0.05, 0),
@@ -168,13 +171,13 @@ Sparplan_Doku_Alva %>%
 
 ## Der NASDAQ-100-ETF von Amundi
 
-Der Sparbetrag wird monatlich in den [Nasdaq-100-ETF von Amundi](https://www.justetf.com/en/etf-profile.html?isin=LU1681038243) angelegt. Im Jahr 2023 hat sich der ETF extrem gut entwickelt.
+Der Sparbetrag wird monatlich in den [Nasdaq-100-ETF von Amundi](https://www.justetf.com/en/etf-profile.html?isin=LU1681038243) angelegt. Im Jahr 2024 hat sich der ETF extrem gut entwickelt.
 
 ```{r}
 ndx_amundi_2023 <- tq_get("6AQQ.DE",
                  get  = "stock.prices",
-                 from = "2023-01-01",
-                 to = "2023-12-31") %>%
+                 from = "2024-01-01",
+                 to = "2024-12-31") %>%
   tq_transmute(select     = adjusted,
                mutate_fun = to.daily) %>%
   mutate(adj_perc = round(adjusted/first(adjusted)-1, 3))
@@ -187,21 +190,21 @@ ggplot(data = ndx_amundi_2023, aes(x = date, y = adj_perc))+
   scale_y_continuous(labels = scales::percent, limits = c(0, 0.52)) +
   geom_dl(aes(label = paste0(round(last(adj_perc)*100, 1), " %"), x = date, y = adj_perc), method = list("last.qp", cex = 1, hjust = 0, vjust = -1), color="red") +
   theme_classic()+
-  labs(x="", y="Performance", title = "Amundi Nasdaq-100 ETF (A2H577) im Jahr 2023")
+  labs(x="", y="Performance", title = "Amundi Nasdaq-100 ETF (A2H577) im Jahr 2024")
 
 
 ```
 
-## Starker Dollar, schwacher Dollar
+## Starker Dollar, schwacher Euro
 
-Das Verhältnis vom Dollar zum Euro hat sich im Jahr 2023 kaum verändert. Der Euro hat sich im Vergleich zum Dollar etwas stabilisiert. 
+Das Verhältnis vom Dollar zum Euro hat sich im Jahr 2024 deutlich verändert. Der Euro hat  im Vergleich zum Dollar an Wert verloren. Das ist gut für den Bestand und schlecht für das Kaufen von Anteilen. 
 
 ```{r}
 # ticker dollar euro EURUSD=X
 dollareuro_2022 <- tq_get("EURUSD=X",
                       get  = "stock.prices",
-                      from = "2023-01-01",
-                      to = "2023-12-31")
+                      from = "2024-01-01",
+                      to = "2024-12-31")
 
 ggplot(data=dollareuro_2022, aes(x=date, y=adjusted))+
   geom_line(linewidth=1)+
@@ -210,12 +213,12 @@ ggplot(data=dollareuro_2022, aes(x=date, y=adjusted))+
   theme_classic()+
   scale_x_date(expand = expansion(mult = c(0.05, .15))) +
   scale_y_continuous(labels=scales::dollar_format()) +
-  labs(title="Entwicklung Euro/Dollar im Jahr 2023", y="Kurs", x="")
+  labs(title="Entwicklung Euro/Dollar im Jahr 2024", y="Kurs", x="")
   
 ```
 
-## Ausblick 2024
+## Ausblick 2025
 
-Der wachstumsorientierte NASDAQ-100-ETF hat sich 2023 sehr gut entwickelt und somit hat sich die etwas riskioreichere Anlagestrategie (etwa im Vergleich zu einem breiter diversifizierten ETF auf den MSCI-World-Index) ausgezahlt. Wie sich die Märkte im Jahr 2024 entwickeln werden, ist ungewiss. Die Analysten sagen, dass es vermutlich auch 2024 weiter nach oben geht. Da der Anlagehorizont der Kinder noch sehr lang ist, ist die kurzfristige Entwicklung jedoch weitestgehend unerheblich. Die Hauptsache ist, dass weiterhin kontinuierlich investiert wird.
+Der wachstumsorientierte NASDAQ-100-ETF hat sich 2024 sehr gut entwickelt und somit hat sich die etwas riskioreichere Anlagestrategie (etwa im Vergleich zu einem breiter diversifizierten ETF auf den MSCI-World-Index) ausgezahlt. Wie sich die Märkte im Jahr 2025 entwickeln werden, ist ungewiss. Da der Anlagehorizont der Kinder noch sehr lang ist, ist die kurzfristige Entwicklung jedoch weitestgehend unerheblich. Die Hauptsache ist, dass weiterhin kontinuierlich investiert wird.
 
 
