@@ -124,7 +124,7 @@ Sparplan_Doku_Alva %>%
     size = 3
   ) +
   geom_point(aes(y = ETFs, alpha = if_else(month(Closing) >= 12, 1, 0)), show.legend = FALSE)+
-  labs(title = "Portfolio Alva 2020-2023",
+  labs(title = "Portfolio Alva 2020-2024",
        x = "",
        y = "",
        fill = "") +
