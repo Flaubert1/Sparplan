@@ -13,6 +13,8 @@ navbar:
       href: "sparplan-2023.html"
     - text: "2024"
       href: "sparplan-2024.html"
+    - text: "2025"
+      href: "sparplan-2025.html"
     # - text: "Monatliche Sparrate"
     #   href: 0001_ansparen_index.html
   right:
