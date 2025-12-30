@@ -29,7 +29,7 @@ library(directlabels)
 
 ## Emil und Alva
 
-Die Portfolios haben sich gut entwickelt und stehen Ende 2025 deutlich im Plus. Emils Portfolio steht XX,X % im Plus und Alvas XX,X %.
+Die Portfolios haben sich gut entwickelt und stehen Ende 2025 deutlich im Plus. Emils Portfolio steht 63,4 % im Plus und Alvas 55,8 %.
 ```{r}
 
 Sparplan_Doku_Emil <- read_excel("~/Documents/Sparplan_Doku_Export.xlsx", 
@@ -147,7 +147,7 @@ Sparplan_Doku_Alva %>%
 
 ## Der NASDAQ-100-ETF von Amundi
 
-Der Sparbetrag wird monatlich in den [Nasdaq-100-ETF von Amundi](https://www.justetf.com/en/etf-profile.html?isin=LU1681038243) angelegt. Im Jahr 2025 hat sich der ETF im Vergleich zu anderen breiten Aktien-ETFs (etwa zu denen auf europäische Märkte oder Schwellenländer) schwächer entwickelt. Das lag vor allem an der Schwäche des US-Dollars (siehe unten) und durch die Unsicherheiten der amerikanischen Handelspolitik.
+Der Sparbetrag wird monatlich in den [Nasdaq-100-ETF von Amundi](https://www.justetf.com/en/etf-profile.html?isin=LU1681038243) angelegt. Im Jahr 2025 hat sich der ETF im Vergleich zu anderen breiten Aktien-ETFs (etwa zu denen auf europäische Märkte oder Schwellenländer) schwächer entwickelt. Das lag vor allem an der Schwäche des US-Dollars (siehe unten) und an der amerikanischen Handelspolitik.
 
 ```{r}
 ndx_amundi_2023 <- tq_get("6AQQ.DE",
@@ -173,7 +173,7 @@ ggplot(data = ndx_amundi_2023, aes(x = date, y = adj_perc))+
 
 ## Schwacher Dollar, starker Euro
 
-Das Verhältnis vom Dollar zum Euro hat sich im Jahr 2025 deutlich verändert. Der Euro hat im Vergleich zum Dollar an Wert gewonnen Das ist schlecht für den Bestand und gut für das Kaufen von Anteilen, da diese durch einen starken Euro günstiger werden. 
+Das Verhältnis vom Dollar zum Euro hat sich im Jahr 2025 deutlich verändert. Der Euro hat im Vergleich zum Dollar an Wert gewonnen. Das ist schlecht für den Bestand und gut für das Kaufen von Anteilen, da diese durch einen starken Euro günstiger werden. Ein starker Euro kann die Rendite des Bestands reduzieren. Der Anstieg des Euros von 1,03 Dollar auf 1,17 Dollar hat die Rendite auf das gesamte Jahr 2025 bezogen um 12 Prozent reduziert. 
 
 ```{r}
 # ticker dollar euro EURUSD=X
@@ -193,7 +193,7 @@ ggplot(data=dollareuro_2022, aes(x=date, y=adjusted))+
   
 ```
 
-## Ausblick 2025
+## Ausblick 2026
 
 Der wachstumsorientierte NASDAQ-100-ETF hat sich 2025 mittelmäßig entwickelt. Andere Regionen und Werte haben bessere Renditen erzielen können. Über einen längeren Zeitraum von drei oder fünf Jahren betrachtet, liegen die amerikanischen Tech-Werte jedoch noch deutlich vorn. Da der Anlagehorizont der Kinder noch sehr lang ist, ist die kurzfristige Entwicklung weitestgehend unerheblich. Die Hauptsache ist, dass weiterhin kontinuierlich investiert wird.
 
