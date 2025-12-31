@@ -29,7 +29,7 @@ library(directlabels)
 
 ## Emil und Alva
 
-Die Portfolios haben sich gut entwickelt und stehen Ende 2025 deutlich im Plus. Emils Portfolio steht 63,4 % im Plus und Alvas 55,8 %.
+Die Portfolios haben sich gut entwickelt und stehen Ende 2025 deutlich im Plus. Emils Portfolio steht 63,5 % im Plus und Alvas 56 %.
 ```{r}
 
 Sparplan_Doku_Emil <- read_excel("~/Documents/Sparplan_Doku_Export.xlsx", 
@@ -195,6 +195,6 @@ ggplot(data=dollareuro_2022, aes(x=date, y=adjusted))+
 
 ## Ausblick 2026
 
-Der wachstumsorientierte NASDAQ-100-ETF hat sich 2025 mittelmäßig entwickelt. Andere Regionen und Werte haben bessere Renditen erzielen können. Über einen längeren Zeitraum von drei oder fünf Jahren betrachtet, liegen die amerikanischen Tech-Werte jedoch noch deutlich vorn. Da der Anlagehorizont der Kinder noch sehr lang ist, ist die kurzfristige Entwicklung weitestgehend unerheblich. Die Hauptsache ist, dass weiterhin kontinuierlich investiert wird.
+Der wachstumsorientierte NASDAQ-100-ETF hat sich 2025 mittelmäßig entwickelt. Andere Regionen und Werte haben bessere Renditen erzielen können. Über einen längeren Zeitraum von drei oder fünf Jahren betrachtet, liegen die amerikanischen Tech-Werte jedoch noch deutlich vorn. Da der Anlagehorizont der Kinder noch sehr lang ist, ist die kurzfristige Entwicklung weitestgehend unerheblich.
 
 
