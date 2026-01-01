@@ -1,6 +1,6 @@
 ---
 title: "Sparplan der Kids 2025"
-date: "Letztes Update: 02.01.2026" #`r format(Sys.time(), '%d.%m.%Y')`
+date: "Letztes Update: 01.01.2026" #`r format(Sys.time(), '%d.%m.%Y')`
 editor_options: 
   chunk_output_type: console
 ---
