@@ -193,8 +193,11 @@ ggplot(data=dollareuro_2022, aes(x=date, y=adjusted))+
   
 ```
 
+
 ## Ausblick 2026
 
 Der wachstumsorientierte NASDAQ-100-ETF hat sich 2025 mittelmäßig entwickelt. Andere Regionen und Werte haben bessere Renditen erzielen können. Über einen längeren Zeitraum von drei oder fünf Jahren betrachtet, liegen die amerikanischen Tech-Werte jedoch noch deutlich vorn. Da der Anlagehorizont der Kinder noch sehr lang ist, ist die kurzfristige Entwicklung weitestgehend unerheblich.
 
+## Steuerliche Aspekte
 
+Durch die erfreuliche Entwicklung der letzten Jahre sind bereits erhebliche virtuelle Gewinne entstanden. Bei Emil sind es 15.622 Euro und bei Alva 10.424 Euro. Diese Gewinne liegen über dem Freibetrag für Kapitalerträge von 1.000 Euro pro Person und Jahr und wären bei einem Verkauf kapitalertragssteuerpfichtig. Ich habe für die Depots der Kinder eine Nichtveranlagungsbescheinigung beantragt und kann somit im Jahr 2026 Gewinne bis zur Einkommengrenze der Familienversicherung realisieren und direkt wieder anlegen. Damit werden die kapitalertragssteuerpfichtigen Gewinne reduziert. 
